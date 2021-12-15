@@ -1,0 +1,24 @@
+name: CI
+'on':
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+  workflow_dispatch: null
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v2
+      - name: Copy Files to Deployment
+        run: 'Xcopy /e /i /y * C:\Deployment\'
+      - name: Run TOSCA Test
+        run: 'C:\GitHub\ToscaCI\Client\ToscaCIClient.exe -m distributed -r "C:\GitHub\Results\Result.xml"'
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: Unit Test Results
+          path: 'C:\GitHub\Results\Result.xml'
